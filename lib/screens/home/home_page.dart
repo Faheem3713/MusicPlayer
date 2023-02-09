@@ -19,7 +19,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @override
   IconData switchMode = Icons.dark_mode_outlined;
   @override
   Widget build(BuildContext context) {

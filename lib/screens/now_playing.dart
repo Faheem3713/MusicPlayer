@@ -17,12 +17,12 @@ import '../functions/load_data.dart';
 int indexOfPlaying = 0;
 
 class NowPlaying extends StatefulWidget {
-  const NowPlaying(
+  NowPlaying(
       {super.key,
       required this.songData,
       required this.intex,
       required this.toStart});
-  final List<SongsDataModel> songData;
+  List<SongsDataModel> songData;
   final int intex;
   final bool toStart;
   @override
@@ -36,10 +36,13 @@ class _NowPlayingState extends State<NowPlaying> {
   String lyricsText = '';
   ValueNotifier<Duration> position = ValueNotifier(Duration.zero);
   bool isFavourite = false;
+  ValueNotifier<Color> shuffleColor = ValueNotifier(Colors.white60);
+  ValueNotifier<bool> isRepeat = ValueNotifier(false);
+  List<SongsDataModel> ogData = [];
   @override
   void initState() {
     super.initState();
-
+    ogData = List.from(widget.songData);
     initFunction();
     getLyrics();
   }
@@ -77,9 +80,9 @@ class _NowPlayingState extends State<NowPlaying> {
                     artworkWidth: 110,
                     nullArtworkWidget: Image.asset(
                       'assets/images/moooz.png',
-                      height: 150,
+                      height: 200,
                     ),
-                    id: widget.songData[indexOfPlaying].id,
+                    id: 55,
                     type: ArtworkType.AUDIO),
                 Column(
                   children: [
@@ -91,16 +94,17 @@ class _NowPlayingState extends State<NowPlaying> {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        content: Text(
-                                          lyricsText
-                                              .split('...'.splitMapJoin(''))[0],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                              letterSpacing: 1,
-                                              height: 1.3),
-                                        ),
+                                        content: lyricsText.isEmpty
+                                            ? const Text(
+                                                'No lyrics found for this song',
+                                                textAlign: TextAlign.center,
+                                                style: klyricsTextStyle)
+                                            : Text(
+                                                lyricsText.split(
+                                                    '...'.splitMapJoin(''))[0],
+                                                textAlign: TextAlign.center,
+                                                style: klyricsTextStyle,
+                                              ),
                                       ));
                             },
                             icon: const Icon(
@@ -188,15 +192,28 @@ class _NowPlayingState extends State<NowPlaying> {
                       children: [
                         IconButton(
                             onPressed: () {
-                              widget.songData.shuffle();
+                              if (shuffleColor.value == Colors.white) {
+                                shuffleColor.value = Colors.white60;
+
+                                widget.songData.clear();
+                                widget.songData.addAll(allSongs.value);
+                              } else {
+                                shuffleColor.value = Colors.white;
+                                widget.songData.shuffle();
+                              }
                             },
-                            icon: const Icon(Icons.shuffle_rounded,
-                                color: Colors.white60)),
+                            icon: ValueListenableBuilder(
+                                valueListenable: shuffleColor,
+                                builder: (context, forcolor, _) {
+                                  return Icon(Icons.shuffle_rounded,
+                                      color: shuffleColor.value);
+                                })),
                         CircleAvatar(
                             backgroundColor: Colors.red[900],
                             child: IconButton(
                                 onPressed: () {
-                                  if (indexOfPlaying > 0) {
+                                  if (indexOfPlaying > 0 &&
+                                      isRepeat.value == false) {
                                     indexOfPlaying--;
                                     setState(() {
                                       PlayMusic.instance.playTheSong(
@@ -247,7 +264,8 @@ class _NowPlayingState extends State<NowPlaying> {
                             child: IconButton(
                                 onPressed: () {
                                   if (indexOfPlaying <
-                                      widget.songData.length - 1) {
+                                          widget.songData.length - 1 &&
+                                      isRepeat.value == false) {
                                     indexOfPlaying++;
                                     setState(() {
                                       PlayMusic.instance.playTheSong(
@@ -262,11 +280,19 @@ class _NowPlayingState extends State<NowPlaying> {
                                 },
                                 icon: const Icon(Icons.skip_next_rounded))),
                         IconButton(
-                            onPressed: () async {},
-                            icon: const Icon(
-                              Icons.repeat,
-                              color: Colors.white60,
-                            )),
+                            onPressed: () async {
+                              isRepeat.value = !isRepeat.value;
+                            },
+                            icon: ValueListenableBuilder(
+                                valueListenable: isRepeat,
+                                builder: (context, forRepeat, _) {
+                                  return Icon(
+                                    Icons.repeat,
+                                    color: isRepeat.value == false
+                                        ? Colors.white60
+                                        : Colors.white,
+                                  );
+                                })),
                       ],
                     )
                   ],
@@ -344,10 +370,10 @@ class PlayMusic {
     PlayMusic.instance.audio
         .setAudioSource(AudioSource.uri(Uri.parse(widget[value].uri),
             tag: MediaItem(
-              id: '1',
+              id: widget[value].id.toString(),
               artist: widget[value].artist,
               title: widget[value].displayName,
-              artUri: Uri.parse('https://example.com/albumart.jpg'),
+              //   artUri: Uri.parse('https://example.com/albumart.jpg'),
             )));
     audio.play();
   }

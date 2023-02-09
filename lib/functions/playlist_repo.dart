@@ -37,4 +37,12 @@ class PlaylistRepo {
 
     playListSongs.notifyListeners();
   }
+
+  clearDatabase() async {
+    var box = await Hive.openBox<PlayListDataModel>('playlistSongs');
+    var recentBox = await Hive.openBox<int>('recent');
+    await box.clear();
+    await recentBox.clear();
+    await getAllPlaylists();
+  }
 }

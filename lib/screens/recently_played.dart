@@ -39,46 +39,46 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
     log(values.toString());
     return Scaffold(
       appBar: AppBarWigets(title: 'Recently played'),
-      body: ListView.separated(
-          itemBuilder: (context, index) {
-            final allSongsData = songDatas[index];
-            return songDatas.isEmpty
-                ? const Center(
-                    child: Text('No Songs'),
-                  )
-                : ListTile(
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NowPlaying(
-                              songData: allSongs.value,
-                              intex: index,
-                              toStart: true,
-                            ),
-                          ));
-                    },
-                    leading: QueryArtworkWidget(
-                        nullArtworkWidget: const Icon(
-                          Icons.music_note_rounded,
-                          size: 38,
-                        ),
-                        artworkBorder: BorderRadius.circular(5),
-                        id: allSongsData.id,
-                        type: ArtworkType.AUDIO),
-                    title: Text(
-                      allSongsData.displayName,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text(allSongsData.album,
-                        overflow: TextOverflow.ellipsis),
-                  );
-          },
-          separatorBuilder: (context, index) =>
-              allSongs.value[index + 1].played == 0
-                  ? const SizedBox()
-                  : kdivider,
-          itemCount: songDatas.length),
+      body: songDatas.isEmpty
+          ? const Center(
+              child: Text('No Songs'),
+            )
+          : ListView.separated(
+              itemBuilder: (context, index) {
+                final allSongsData = songDatas[index];
+                return ListTile(
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NowPlaying(
+                            songData: allSongs.value,
+                            intex: index,
+                            toStart: true,
+                          ),
+                        ));
+                  },
+                  leading: QueryArtworkWidget(
+                      nullArtworkWidget: const Icon(
+                        Icons.music_note_rounded,
+                        size: 38,
+                      ),
+                      artworkBorder: BorderRadius.circular(5),
+                      id: allSongsData.id,
+                      type: ArtworkType.AUDIO),
+                  title: Text(
+                    allSongsData.displayName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle:
+                      Text(allSongsData.album, overflow: TextOverflow.ellipsis),
+                );
+              },
+              separatorBuilder: (context, index) =>
+                  allSongs.value[index + 1].played == 0
+                      ? const SizedBox()
+                      : kdivider,
+              itemCount: songDatas.length),
       bottomNavigationBar: const BottomNavigationBarWidget(),
     );
   }

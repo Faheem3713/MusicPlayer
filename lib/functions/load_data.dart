@@ -143,4 +143,10 @@ class LoadData {
     await box.put(val.finderKey, val);
     getAllSongsFromDatabase();
   }
+
+  clearDatabase() async {
+    var box = await Hive.openBox<SongsDataModel>('songData');
+    await box.clear();
+    getAllSongsFromDatabase();
+  }
 }

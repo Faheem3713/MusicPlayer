@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:musicplayer/screens/most_played.dart';
 import 'package:musicplayer/screens/recently_played.dart';
 
-import '../../screens/about.dart';
+import '../../screens/settings/about.dart';
 import '../../screens/allsongs.dart';
 import '../../screens/favorites.dart';
 import '../../screens/playlistsongs/playlists.dart';
-import '../../screens/settings.dart';
+import '../../screens/settings/settings.dart';
 
 class TextHardCode {
   // ignore: prefer_final_fields

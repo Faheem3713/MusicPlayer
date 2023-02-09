@@ -34,8 +34,8 @@ class _OnBoardingState extends State<OnBoarding> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Image.asset(
-              'assets/images/moooz.png',
-              height: 170,
+              'assets/images/image-removebg-preview.png',
+              height: 120,
             ),
             const ListTile(
               title: Text(

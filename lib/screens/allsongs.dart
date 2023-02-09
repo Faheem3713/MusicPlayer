@@ -16,16 +16,26 @@ class AllSongs extends StatefulWidget {
   State<AllSongs> createState() => _AllSongsState();
 }
 
-class _AllSongsState extends State<AllSongs> {
+class _AllSongsState extends State<AllSongs> with WidgetsBindingObserver {
   bool isSearch = false;
   final List<SongsDataModel> _allSongs = [];
   final _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _allSongs.addAll(allSongs.value);
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _allSongs.clear();
+      _allSongs.add(allSongs.value[0]);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: !isSearch
@@ -75,6 +85,7 @@ class _AllSongsState extends State<AllSongs> {
               itemBuilder: (context, index) {
                 return ListTile(
                   onTap: () async {
+                    await LoadData.instance.playingCount(_allSongs[index]);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -83,7 +94,10 @@ class _AllSongsState extends State<AllSongs> {
                             intex: index,
                             toStart: true,
                           ),
-                        ));
+                        )).then((value) {
+                      _allSongs.clear();
+                      _allSongs.addAll(allSongs.value);
+                    });
                   },
                   leading: QueryArtworkWidget(
                       nullArtworkWidget: const Icon(

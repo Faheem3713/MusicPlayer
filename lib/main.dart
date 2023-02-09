@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themaData, _) {
           return MaterialApp(
               debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
+              title: 'MuzeeQ ',
               theme: appTheme.value,
               home: OnBoarding());
         });
