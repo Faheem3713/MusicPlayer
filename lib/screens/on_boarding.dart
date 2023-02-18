@@ -21,7 +21,7 @@ class _OnBoardingState extends State<OnBoarding> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MyHomePage(),
+            builder: (context) => const MyHomePage(),
           ));
     });
   }

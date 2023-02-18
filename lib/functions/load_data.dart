@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+
 import 'package:hive_flutter/adapters.dart';
 import 'package:musicplayer/model/songs_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -40,7 +40,7 @@ class LoadData {
                 id: element.id,
                 uri: element.uri ?? '',
                 duration: element.duration ?? 0,
-                displayName: element.displayName,
+                displayName: element.displayNameWOExt,
                 album: element.album ?? "",
                 artist: element.artist ?? "",
                 playlists: []));

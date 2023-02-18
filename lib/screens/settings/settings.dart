@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:musicplayer/constants/constants.dart';
 import 'package:musicplayer/functions/load_data.dart';
 import 'package:musicplayer/functions/playlist_repo.dart';
 import 'package:musicplayer/screens/settings/about.dart';
@@ -94,7 +93,8 @@ class _SettingsState extends State<Settings> {
       SettingsModel(
           name: 'Share App',
           onpressed: () {
-            Share.share('www.muzeeq.com/playstore');
+            Share.share(
+                "https://play.google.com/store/apps/details?id=in.brototype.muzeeq");
           }),
     ];
   }

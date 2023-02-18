@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:musicplayer/constants/common/alert_dialogues.dart';
@@ -8,9 +7,10 @@ import 'package:musicplayer/screens/home/home_page.dart';
 import 'package:musicplayer/screens/now_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../constants/constants.dart';
+import 'home/bottom_navigation.dart';
 
 class AllSongs extends StatefulWidget {
-  AllSongs({super.key});
+  const AllSongs({super.key});
 
   @override
   State<AllSongs> createState() => _AllSongsState();
@@ -28,13 +28,6 @@ class _AllSongsState extends State<AllSongs> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _allSongs.clear();
-      _allSongs.add(allSongs.value[0]);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,10 +44,8 @@ class _AllSongsState extends State<AllSongs> with WidgetsBindingObserver {
                   ))
             ])
           : AppBar(
-              //    backgroundColor: Colors.grey[200],
               automaticallyImplyLeading: false,
               title: CupertinoSearchTextField(
-                //   backgroundColor: Colors.grey[50],
                 suffixMode: OverlayVisibilityMode.always,
                 onSuffixTap: (() {
                   setState(() {
@@ -84,12 +75,12 @@ class _AllSongsState extends State<AllSongs> with WidgetsBindingObserver {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return ListTile(
-                  onTap: () async {
-                    await LoadData.instance.playingCount(_allSongs[index]);
+                  onTap: () {
+                    LoadData.instance.playingCount(_allSongs[index]);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => NowPlaying(
+                          builder: (ctx) => NowPlaying(
                             songData: _allSongs,
                             intex: index,
                             toStart: true,
@@ -111,7 +102,7 @@ class _AllSongsState extends State<AllSongs> with WidgetsBindingObserver {
                     _allSongs[index].displayName,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle: Text(_allSongs[index].album,
+                  subtitle: Text(_allSongs[index].artist,
                       overflow: TextOverflow.ellipsis),
                   trailing: IconButton(
                     icon: const Icon(Icons.more_vert),

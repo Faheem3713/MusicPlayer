@@ -3,18 +3,13 @@ import 'package:musicplayer/constants/constants.dart';
 import 'package:musicplayer/functions/load_data.dart';
 import 'package:musicplayer/functions/playlist_repo.dart';
 import 'package:musicplayer/model/playlist/playlist_model.dart';
+import 'package:musicplayer/model/songs_model.dart';
 import 'package:musicplayer/screens/home/home_page.dart';
 import 'package:musicplayer/screens/playlistsongs/playlist_songs.dart';
 import '../../constants/common/alert_dialogues.dart';
 
-class PlayLists extends StatefulWidget {
-  const PlayLists({super.key});
-  @override
-  State<PlayLists> createState() => _PlayListsState();
-}
-
-class _PlayListsState extends State<PlayLists> {
-  final List _names = [];
+class PlayLists extends StatelessWidget {
+  PlayLists({super.key});
 
   final _nameController = TextEditingController();
 
@@ -22,7 +17,7 @@ class _PlayListsState extends State<PlayLists> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromRGBO(238, 238, 238, 1),
+        backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
         onPressed: () {
           _dialogueWidget(context, false);
         },
@@ -36,19 +31,27 @@ class _PlayListsState extends State<PlayLists> {
           valueListenable: playListSongs,
           builder: (context, playlistSong, _) {
             return playListSongs.value.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text('No playlists'),
                   )
                 : ListView.separated(
                     itemBuilder: (context, index) {
-                      final _playlistData = playlistSong[index];
+                      final playlistData = playlistSong[index];
                       return ListTile(
                         onTap: () {
+                          List<SongsDataModel> filtered = [];
+                          for (var element in allSongs.value) {
+                            if (element.playlists
+                                .contains(playlistData.playlistName)) {
+                              filtered.add(element);
+                            }
+                          }
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PlaylistSongsDisplay(
-                                    playlistName: _playlistData.playlistName),
+                                    songData: filtered,
+                                    playlistName: playlistData.playlistName),
                               ));
                         },
                         leading: Container(
@@ -56,10 +59,13 @@ class _PlayListsState extends State<PlayLists> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
                               color: Colors.grey[200]),
-                          child: const Icon(Icons.music_note_rounded),
+                          child: const Icon(
+                            Icons.music_note_rounded,
+                            size: 30,
+                          ),
                         ),
-                        title: Text(_playlistData.playlistName),
-                        subtitle: Text(_playlistData.playlistName.toString()),
+                        title: Text(playlistData.playlistName),
+                        //  subtitle: Text(_play),
                         trailing: IconButton(
                             onPressed: () {
                               showDialog(
@@ -73,13 +79,11 @@ class _PlayListsState extends State<PlayLists> {
                                               ListTile(
                                                 onTap: () {
                                                   _nameController.text =
-                                                      _playlistData
-                                                          .playlistName;
+                                                      playlistData.playlistName;
 
                                                   _dialogueWidget(context, true,
                                                       index: index,
-                                                      updateName:
-                                                          _playlistData);
+                                                      updateName: playlistData);
                                                 },
                                                 leading: const Icon(Icons.edit),
                                                 title: const Text('Update'),
@@ -95,7 +99,7 @@ class _PlayListsState extends State<PlayLists> {
                                                         in allSongs.value) {
                                                       element.playlists
                                                           .removeWhere((e) =>
-                                                              _playlistData
+                                                              playlistData
                                                                   .playlistName
                                                                   .contains(e));
                                                       LoadData.instance
@@ -131,6 +135,11 @@ class _PlayListsState extends State<PlayLists> {
     return showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        titleTextStyle: TextStyle(
+            color: kBlack.withOpacity(.7),
+            fontSize: 18,
+            fontWeight: FontWeight.w300),
+        title: Text(isUpdate ? "Update playlist" : 'Add to playlist'),
         content: SizedBox(
           height: 120,
           child: ListView(
@@ -148,7 +157,8 @@ class _PlayListsState extends State<PlayLists> {
                       for (var ele in playListSongs.value) {
                         if (ele.playlistName == _nameController.text) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Name already exist')));
+                              const SnackBar(
+                                  content: Text('Name already exist')));
                           numContains = 1;
                           break;
                         }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:musicplayer/functions/load_data.dart';
 import 'package:musicplayer/model/songs_model.dart';
@@ -7,6 +5,7 @@ import 'package:musicplayer/screens/home/home_page.dart';
 import 'package:musicplayer/screens/now_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../constants/constants.dart';
+import 'home/bottom_navigation.dart';
 
 class MostPlayed extends StatefulWidget {
   const MostPlayed({
@@ -59,8 +58,8 @@ class _PlayedSongsListState extends State<MostPlayed> {
                     allSongsData.displayName,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle:
-                      Text(allSongsData.album, overflow: TextOverflow.ellipsis),
+                  subtitle: Text(allSongsData.artist,
+                      overflow: TextOverflow.ellipsis),
                 );
               },
               separatorBuilder: (context, index) =>
@@ -77,7 +76,6 @@ class _PlayedSongsListState extends State<MostPlayed> {
           songData.add(element);
         });
       }
-      log(element.played.toString() + 'jhaskjh');
     }
     songData.sort(
       (a, b) {

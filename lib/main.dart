@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               title: 'MuzeeQ ',
               theme: appTheme.value,
-              home: OnBoarding());
+              home: const OnBoarding());
         });
   }
 }

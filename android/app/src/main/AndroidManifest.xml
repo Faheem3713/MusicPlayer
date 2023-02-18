@@ -7,7 +7,7 @@
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   
    <application
-        android:label="musicplayer"
+        android:label="Muzeeq"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

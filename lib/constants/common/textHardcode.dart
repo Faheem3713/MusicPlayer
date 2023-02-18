@@ -18,11 +18,11 @@ class TextHardCode {
     Library(
         icon: const Icon(Icons.queue_music_outlined),
         text: 'Playlists',
-        pages: const PlayLists()),
+        pages: PlayLists()),
     Library(
         icon: const Icon(Icons.music_note_outlined),
         text: 'All Songs',
-        pages: AllSongs()),
+        pages: const AllSongs()),
     // Library(
     //     icon: const Icon(Icons.album), text: 'Albums', pages: const Albums()),
     Library(
@@ -35,7 +35,9 @@ class TextHardCode {
         // ignore: prefer_const_constructors
         pages: MostPlayed()),
     Library(
-        icon: const Icon(Icons.settings), text: 'Settings', pages: Settings()),
+        icon: const Icon(Icons.settings),
+        text: 'Settings',
+        pages: const Settings()),
     Library(
       icon: const Icon(Icons.info_outlined),
       text: 'About',

@@ -10,6 +10,7 @@ const kHeight = SizedBox(height: 10);
 const kWidth = SizedBox(width: 10);
 const kBlack = Colors.black;
 const kBlack54 = Colors.black54;
-
+const kColor3 = Color(0xFFFFCACA);
+const kColor4 = Color(0xFFFFECEF);
 const klyricsTextStyle = TextStyle(
     fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 1, height: 1.3);

@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:musicplayer/functions/load_data.dart';
@@ -9,6 +6,7 @@ import 'package:musicplayer/screens/home/home_page.dart';
 import 'package:musicplayer/screens/now_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../constants/constants.dart';
+import 'home/bottom_navigation.dart';
 
 class RecentlyPlayed extends StatefulWidget {
   const RecentlyPlayed({
@@ -26,17 +24,10 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
   void initState() {
     _getThings();
     super.initState();
-    //   for (var ele in allSongs.value) {
-    //     if (element == ele.displayName) {
-    //       songDatas.add(ele);
-    //     }
-    //   }
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    log(values.toString());
     return Scaffold(
       appBar: AppBarWigets(title: 'Recently played'),
       body: songDatas.isEmpty
@@ -52,7 +43,7 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => NowPlaying(
-                            songData: allSongs.value,
+                            songData: songDatas,
                             intex: index,
                             toStart: true,
                           ),
@@ -70,8 +61,8 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
                     allSongsData.displayName,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle:
-                      Text(allSongsData.album, overflow: TextOverflow.ellipsis),
+                  subtitle: Text(allSongsData.artist,
+                      overflow: TextOverflow.ellipsis),
                 );
               },
               separatorBuilder: (context, index) =>
