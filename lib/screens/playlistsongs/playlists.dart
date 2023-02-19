@@ -139,7 +139,7 @@ class PlayLists extends StatelessWidget {
             color: kBlack.withOpacity(.7),
             fontSize: 18,
             fontWeight: FontWeight.w300),
-        title: Text(isUpdate ? "Update playlist" : 'Add to playlist'),
+        title: Text(isUpdate ? "Update playlist" : 'Add playlist'),
         content: SizedBox(
           height: 120,
           child: ListView(
@@ -170,6 +170,7 @@ class PlayLists extends StatelessWidget {
                                     playlistName: _nameController.text))
                             : PlaylistRepo.instance.updatePlaylist(
                                 updateName!, _nameController.text, index);
+                        _nameController.clear();
                       }
                       Navigator.pop(context);
                     },

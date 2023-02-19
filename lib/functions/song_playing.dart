@@ -21,24 +21,17 @@ class PlayMusic {
                   widget[index].uri,
                 ),
                 tag: MediaItem(
-                  id: widget[value].id.toString(),
-                  artist: widget[value].artist,
-                  title: widget[value].displayName,
-                  artUri: Uri.parse('https://example.com/albumart.jpg'),
+                  duration: Duration(milliseconds: widget[index].duration),
+                  id: widget[index].id.toString(),
+                  artist: widget[index].artist,
+                  title: widget[index].displayName,
                 ))));
     audio.setAudioSource(
+      preload: true,
       songList,
       initialIndex: value,
       initialPosition: Duration.zero,
     );
-
-    // audio.setAudioSource(AudioSource.uri(Uri.parse(widget[value].uri),
-    //     tag: MediaItem(
-    //       id: widget[value].id.toString(),
-    //       artist: widget[value].artist,
-    //       title: widget[value].displayName,
-    //       //  artUri: Uri.parse('https://example.com/albumart.jpg'),
-    //     )));
     audio.play();
   }
 }

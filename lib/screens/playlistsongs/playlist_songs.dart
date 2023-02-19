@@ -37,7 +37,7 @@ class PlaylistSongsDisplay extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => NowPlaying(
-                                    songData: data,
+                                    songData: songData,
                                     intex: index,
                                     toStart: true),
                               ));

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:musicplayer/functions/load_data.dart';
+import 'package:musicplayer/functions/song_playing.dart';
 import 'package:musicplayer/model/songs_model.dart';
 import 'package:musicplayer/screens/home/home_page.dart';
 import 'package:musicplayer/screens/now_playing.dart';
@@ -36,6 +39,12 @@ class _PlayedSongsListState extends State<MostPlayed> {
                 final allSongsData = songData[index];
                 return ListTile(
                   onTap: () async {
+                    log(index.toString());
+                    if (PlayMusic.instance.audio.currentIndex == null) {
+                      indexOfPlaying = index;
+                    } else {
+                      indexOfPlaying = PlayMusic.instance.audio.currentIndex!;
+                    }
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -62,8 +71,7 @@ class _PlayedSongsListState extends State<MostPlayed> {
                       overflow: TextOverflow.ellipsis),
                 );
               },
-              separatorBuilder: (context, index) =>
-                  songData[index + 1].played == 0 ? const SizedBox() : kdivider,
+              separatorBuilder: (context, index) => kdivider,
               itemCount: songData.length),
       bottomNavigationBar: const BottomNavigationBarWidget(),
     );
@@ -74,8 +82,9 @@ class _PlayedSongsListState extends State<MostPlayed> {
       if (element.played > 3) {
         setState(() {
           songData.add(element);
+          log(element.played.toString());
         });
-      }
+      } else {}
     }
     songData.sort(
       (a, b) {

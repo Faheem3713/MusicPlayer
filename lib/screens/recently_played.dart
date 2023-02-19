@@ -65,10 +65,7 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
                       overflow: TextOverflow.ellipsis),
                 );
               },
-              separatorBuilder: (context, index) =>
-                  allSongs.value[index + 1].played == 0
-                      ? const SizedBox()
-                      : kdivider,
+              separatorBuilder: (context, index) => kdivider,
               itemCount: songDatas.length),
       bottomNavigationBar: const BottomNavigationBarWidget(),
     );

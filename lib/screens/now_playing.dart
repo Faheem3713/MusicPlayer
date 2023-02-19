@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -35,18 +36,15 @@ class _NowPlayingState extends State<NowPlaying> {
   ValueNotifier<Color> shuffleColor = ValueNotifier(Colors.white60);
   ValueNotifier<bool> isRepeat = ValueNotifier(false);
   List<SongsDataModel> ogData = [];
-  Icon playerIcon = const Icon(
-    Icons.play_arrow_rounded,
-    size: 30,
-    color: kColor4,
-  );
+  final audioData = PlayMusic.instance.audio;
+
   @override
   void initState() {
     super.initState();
     ogData = List.from(widget.songData);
-    PlayMusic.instance.playTheSong(widget.intex, widget.songData);
-    // initFunction();
-    // getLyrics();
+
+    initFunction();
+    getLyrics();
   }
 
   @override
@@ -210,18 +208,19 @@ class _NowPlayingState extends State<NowPlaying> {
                             backgroundColor: const Color(0xFF372948),
                             child: IconButton(
                                 onPressed: () {
-                                  if (indexOfPlaying > 0 &&
+                                  if (audioData.hasPrevious &&
                                       isRepeat.value == false) {
-                                    indexOfPlaying--;
-                                    setState(() {
-                                      PlayMusic.instance.playTheSong(
-                                          indexOfPlaying, widget.songData);
+                                    widget.songData[audioData.currentIndex! - 1]
+                                                .isFavourite ==
+                                            true
+                                        ? isFavourite = true
+                                        : isFavourite = false;
+                                    audioData.seekToPrevious().then((value) {
+                                      indexOfPlaying = audioData.currentIndex!;
+                                      setState(() {});
                                     });
                                   } else {
-                                    setState(() {
-                                      PlayMusic.instance.playTheSong(
-                                          indexOfPlaying, widget.songData);
-                                    });
+                                    return;
                                   }
                                 },
                                 icon: const Icon(
@@ -233,37 +232,49 @@ class _NowPlayingState extends State<NowPlaying> {
                           child: CircleAvatar(
                             radius: 35,
                             backgroundColor: const Color(0xFF372948),
-                            child: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (PlayMusic.instance.audio.playing) {
-                                      PlayMusic.instance.audio.pause();
-                                    } else {
-                                      PlayMusic.instance.audio.play();
-                                    }
-                                  });
-                                },
-                                icon: playerIcon),
+                            child: ValueListenableBuilder(
+                                valueListenable: playingIcon,
+                                builder: (context, playIcon, _) {
+                                  return IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          if (PlayMusic
+                                              .instance.audio.playing) {
+                                            audioData.pause();
+                                          } else {
+                                            audioData.play();
+                                          }
+                                        });
+                                      },
+                                      icon: Icon(
+                                        playIcon,
+                                        color: kColor4,
+                                        size: 30,
+                                      ));
+                                }),
                           ),
                         ),
                         CircleAvatar(
                             backgroundColor: const Color(0xFF372948),
                             child: IconButton(
                                 onPressed: () {
-                                  if (indexOfPlaying <
-                                          widget.songData.length - 1 &&
-                                      isRepeat.value == false) {
-                                    indexOfPlaying++;
-                                    setState(() {
-                                      PlayMusic.instance.playTheSong(
-                                          indexOfPlaying, widget.songData);
-                                    });
-                                  } else {
-                                    setState(() {
-                                      PlayMusic.instance.playTheSong(
-                                          indexOfPlaying, widget.songData);
-                                    });
-                                  }
+                                  setState(() {
+                                    if (PlayMusic.instance.audio.hasNext) {
+                                      audioData.seekToNext().then((value) {
+                                        indexOfPlaying =
+                                            audioData.currentIndex!;
+                                        setState(() {});
+                                      });
+                                      widget
+                                                  .songData[
+                                                      audioData.currentIndex! +
+                                                          1]
+                                                  .isFavourite ==
+                                              true
+                                          ? isFavourite = true
+                                          : isFavourite = false;
+                                    }
+                                  });
                                 },
                                 icon: const Icon(
                                   Icons.skip_next_rounded,
@@ -294,24 +305,31 @@ class _NowPlayingState extends State<NowPlaying> {
   }
 
   getLyrics() async {
-    final text = widget.songData[widget.intex].title.split(' -');
-    String url =
-        "https://api.musixmatch.com/ws/1.1/matcher.lyrics.get?q_track=${text[0]}&q_artist=${widget.songData[widget.intex].artist}&apikey=a1513fa57e2fe52afa260b30984a8e4f";
-    Response response = await http.get(Uri.parse(url));
+    try {
+      final text = widget.songData[widget.intex].title.split(' -');
+      String url =
+          "https://api.musixmatch.com/ws/1.1/matcher.lyrics.get?q_track=${text[0]}&q_artist=${widget.songData[widget.intex].artist}&apikey=a1513fa57e2fe52afa260b30984a8e4f";
+      Response response = await http.get(Uri.parse(url));
 
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      lyricsText = data['message']['body']['lyrics']['lyrics_body'];
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        lyricsText = data['message']['body']['lyrics']['lyrics_body'];
+      }
+    } catch (e) {
+      log(e.toString());
     }
   }
 
   initFunction() async {
     indexOfPlaying = widget.intex;
 
+    // indexOfPlaying =
+    //     audioData.currentIndex!.isNaN ? widget.intex : audioData.currentIndex!;
+
     widget.songData[indexOfPlaying].isFavourite == true
         ? isFavourite = true
         : isFavourite = false;
-    indexOfPlaying = widget.intex;
+
     PlayMusic.instance.audio.positionStream.listen((event) {
       position.value = event;
       if (event.inMilliseconds == widget.songData[indexOfPlaying].duration) {
@@ -325,17 +343,11 @@ class _NowPlayingState extends State<NowPlaying> {
     });
 
     PlayMusic.instance.audio.playingStream.listen((event) {
-      setState(() {
-        if (event) {
-          playerIcon = const Icon(Icons.pause, size: 30, color: kColor4);
-        } else {
-          playerIcon = const Icon(
-            Icons.play_arrow_rounded,
-            size: 30,
-            color: kColor4,
-          );
-        }
-      });
+      if (event) {
+        playingIcon.value = Icons.pause;
+      } else {
+        playingIcon.value = Icons.play_arrow_rounded;
+      }
     });
 
     if (widget.toStart) {
@@ -348,11 +360,9 @@ class _NowPlayingState extends State<NowPlaying> {
       await box.clear();
       val.insert(0, widget.songData[indexOfPlaying].id);
       box.addAll(val);
-      playerIcon = const Icon(
-        Icons.pause,
-        size: 30,
-      );
+      playingIcon.value = Icons.pause;
     }
+    setState(() {});
     miniplayer.value = true;
   }
 
@@ -365,3 +375,7 @@ class _NowPlayingState extends State<NowPlaying> {
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
 }
+
+ValueNotifier<IconData> playingIcon = ValueNotifier(
+  Icons.play_arrow_rounded,
+);

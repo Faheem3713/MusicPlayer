@@ -18,23 +18,7 @@ class BottomNavigationBarWidget extends StatefulWidget {
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
-  Icon playerIcon = const Icon(
-    Icons.pause,
-    size: 30,
-  );
   @override
-  void initState() {
-    super.initState();
-    PlayMusic.instance.audio.playingStream.listen((event) {
-      event
-          ? playerIcon = const Icon(
-              Icons.pause,
-              size: 30,
-            )
-          : playerIcon = const Icon(Icons.play_arrow_rounded);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -94,27 +78,27 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                             ),
                             WidgetSpan(
                               alignment: PlaceholderAlignment.middle,
-                              child: IconButton(
-                                onPressed: () {
-                                  if (PlayMusic.instance.audio.playing) {
-                                    PlayMusic.instance.audio.pause();
-                                    setState(() {
-                                      playerIcon = const Icon(
-                                          Icons.play_arrow_rounded,
-                                          size: 30);
-                                    });
-                                  } else {
-                                    PlayMusic.instance.audio.play();
-                                    setState(() {
-                                      playerIcon = const Icon(
-                                        Icons.pause,
-                                        size: 30,
-                                      );
-                                    });
-                                  }
-                                },
-                                icon: playerIcon,
-                              ),
+                              child: ValueListenableBuilder(
+                                  valueListenable: playingIcon,
+                                  builder: (context, playerIcon, _) {
+                                    return IconButton(
+                                      onPressed: () {
+                                        if (PlayMusic.instance.audio.playing) {
+                                          PlayMusic.instance.audio.pause();
+
+                                          playerIcon = Icons.play_arrow_rounded;
+                                        } else {
+                                          PlayMusic.instance.audio.play();
+
+                                          playerIcon = Icons.pause;
+                                        }
+                                      },
+                                      icon: Icon(
+                                        playerIcon,
+                                        color: Colors.black54,
+                                      ),
+                                    );
+                                  }),
                             ),
                             WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,

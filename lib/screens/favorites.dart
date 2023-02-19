@@ -58,7 +58,9 @@ class _FavoritesState extends State<Favorites> {
                         LoadData.instance.deleteFromFavourite(favdata);
                         Navigator.pop(context);
                       });
-                      songData.removeAt(index);
+                      setState(() {
+                        songData.removeAt(index);
+                      });
                     },
                   ),
                 );
